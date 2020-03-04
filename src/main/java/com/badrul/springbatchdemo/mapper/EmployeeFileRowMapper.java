@@ -13,10 +13,10 @@ public class EmployeeFileRowMapper implements FieldSetMapper<Employee> {
         employee.setFirstName(fieldSet.readString("firstName"));
         employee.setLastName(fieldSet.readString("lastName"));
         employee.setEmail(fieldSet.readString("email"));
-        try {
+//        try {
             employee.setAge(fieldSet.readInt("age"));
-        } catch (Exception e) {
-        }
+//        } catch (Exception e) {
+//        }
         return employee;
     }
 }
