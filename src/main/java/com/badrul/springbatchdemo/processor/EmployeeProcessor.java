@@ -13,12 +13,15 @@ public class EmployeeProcessor implements ItemProcessor<Employee, Employee> {
     @Override
     public Employee process(Employee emp) throws Exception {
         Employee employee = new Employee();
-        employee.setEmployeeId(emp.getEmployeeId()+new Random().nextInt(100000));
+        employee.setEmployeeId(emp.getEmployeeId() + new Random().nextInt(100000));
         employee.setFirstName(emp.getFirstName());
         employee.setLastName(emp.getLastName());
         employee.setEmail(emp.getEmail());
         employee.setAge(emp.getAge());
         System.out.println("inside processor " + employee.toString());
+        if (emp.getAge() == 39) {
+            throw new ArithmeticException("Some error 39 age not allowed");
+        }
         return employee;
     }
 }

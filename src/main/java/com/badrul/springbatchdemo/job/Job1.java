@@ -1,6 +1,9 @@
 package com.badrul.springbatchdemo.job;
 
 import com.badrul.springbatchdemo.listener.JobListener;
+import com.badrul.springbatchdemo.listener.ProcessListener;
+import com.badrul.springbatchdemo.listener.ReaderListener;
+import com.badrul.springbatchdemo.listener.WriterListener;
 import com.badrul.springbatchdemo.mapper.EmployeeDBRowMapper;
 import com.badrul.springbatchdemo.mapper.EmployeeFileRowMapper;
 import com.badrul.springbatchdemo.model.Employee;
@@ -32,6 +35,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
+import javax.servlet.WriteListener;
 import javax.sql.DataSource;
 
 @Configuration
@@ -70,7 +74,10 @@ public class Job1 {
 //                .writer(employeeJdbcBatchItemWriter())
                 .writer(customWriter)
 //                .writer(employeeItemWriter())
-                .faultTolerant().skipPolicy(jobSkipPolicy())
+                .listener(readerListener())
+                .listener(processListener())
+                .listener(writeListener())
+//                .faultTolerant().skipPolicy(jobSkipPolicy())
                 .taskExecutor(taskExecutor())
                 .build();
     }
@@ -144,5 +151,20 @@ public class Job1 {
     @Bean
     public JobListener jobListener() {
         return new JobListener();
+    }
+
+    @Bean
+    public ReaderListener readerListener() {
+        return new ReaderListener();
+    }
+
+    @Bean
+    public ProcessListener processListener() {
+        return new ProcessListener();
+    }
+
+    @Bean
+    public WriterListener writeListener() {
+        return new WriterListener();
     }
 }
