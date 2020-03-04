@@ -1,5 +1,6 @@
 package com.badrul.springbatchdemo.job;
 
+import com.badrul.springbatchdemo.listener.JobListener;
 import com.badrul.springbatchdemo.mapper.EmployeeDBRowMapper;
 import com.badrul.springbatchdemo.mapper.EmployeeFileRowMapper;
 import com.badrul.springbatchdemo.model.Employee;
@@ -55,6 +56,7 @@ public class Job1 {
     public Job job1job() throws Exception {
         return this.jobBuilderFactory.get("job1")
                 .start(job1Step1())
+                .listener(jobListener())
                 .build();
     }
 
@@ -65,7 +67,7 @@ public class Job1 {
 //                .reader(employeeItemStreamReader())
                 .reader(employeeFlatFileItemReader())
                 .processor(employeeProcessor)
-                .writer(employeeJdbcBatchItemWriter())
+//                .writer(employeeJdbcBatchItemWriter())
                 .writer(customWriter)
 //                .writer(employeeItemWriter())
                 .faultTolerant().skipPolicy(jobSkipPolicy())
@@ -137,5 +139,10 @@ public class Job1 {
     @Bean
     public JobSkipPolicy jobSkipPolicy() {
         return new JobSkipPolicy();
+    }
+
+    @Bean
+    public JobListener jobListener() {
+        return new JobListener();
     }
 }
