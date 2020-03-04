@@ -1,5 +1,10 @@
 package com.badrul.springbatchdemo.job;
 
+import com.badrul.springbatchdemo.handler.SkipRecordCallback;
+import com.badrul.springbatchdemo.listener.JobListener;
+import com.badrul.springbatchdemo.listener.ProcessListener;
+import com.badrul.springbatchdemo.listener.ReaderListener;
+import com.badrul.springbatchdemo.listener.WriterListener;
 import com.badrul.springbatchdemo.mapper.EmployeeDBRowMapper;
 import com.badrul.springbatchdemo.mapper.EmployeeFileRowMapper;
 import com.badrul.springbatchdemo.model.Employee;
@@ -32,6 +37,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
+import javax.servlet.WriteListener;
 import javax.sql.DataSource;
 
 @Configuration
@@ -56,6 +62,7 @@ public class Job1 {
     public Job job1job() throws Exception {
         return this.jobBuilderFactory.get("job1")
                 .start(job1Step1())
+                .listener(jobListener())
                 .build();
     }
 
@@ -66,10 +73,13 @@ public class Job1 {
 //                .reader(employeeItemStreamReader())
                 .reader(employeeFlatFileItemReader())
                 .processor(employeeProcessor)
-                .writer(employeeJdbcBatchItemWriter())
+//                .writer(employeeJdbcBatchItemWriter())
                 .writer(customWriter)
 //                .writer(employeeItemWriter())
-                .faultTolerant().skipPolicy(jobSkipPolicy())
+                .listener(readerListener())
+                .listener(processListener())
+                .listener(writeListener())
+//                .faultTolerant().skipPolicy(jobSkipPolicy())
                 .taskExecutor(taskExecutor())
                 .build();
     }
@@ -85,6 +95,8 @@ public class Job1 {
     public FlatFileItemReader<Employee> employeeFlatFileItemReader() throws Exception {
         FlatFileItemReader<Employee> itemReader = new FlatFileItemReader<>();
         itemReader.setResource(inputFileResource(null));
+        itemReader.setLinesToSkip(1);
+        itemReader.setSkippedLinesCallback(new SkipRecordCallback());
         itemReader.setLineMapper(new DefaultLineMapper<Employee>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 setNames("employeeId", "firstName", "lastName", "email", "age");
@@ -138,5 +150,25 @@ public class Job1 {
     @Bean
     public JobSkipPolicy jobSkipPolicy() {
         return new JobSkipPolicy();
+    }
+
+    @Bean
+    public JobListener jobListener() {
+        return new JobListener();
+    }
+
+    @Bean
+    public ReaderListener readerListener() {
+        return new ReaderListener();
+    }
+
+    @Bean
+    public ProcessListener processListener() {
+        return new ProcessListener();
+    }
+
+    @Bean
+    public WriterListener writeListener() {
+        return new WriterListener();
     }
 }
