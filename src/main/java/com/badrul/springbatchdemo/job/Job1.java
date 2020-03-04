@@ -1,5 +1,6 @@
 package com.badrul.springbatchdemo.job;
 
+import com.badrul.springbatchdemo.handler.SkipRecordCallback;
 import com.badrul.springbatchdemo.listener.JobListener;
 import com.badrul.springbatchdemo.listener.ProcessListener;
 import com.badrul.springbatchdemo.listener.ReaderListener;
@@ -93,6 +94,8 @@ public class Job1 {
     public FlatFileItemReader<Employee> employeeFlatFileItemReader() throws Exception {
         FlatFileItemReader<Employee> itemReader = new FlatFileItemReader<>();
         itemReader.setResource(inputFileResource(null));
+        itemReader.setLinesToSkip(1);
+        itemReader.setSkippedLinesCallback(new SkipRecordCallback());
         itemReader.setLineMapper(new DefaultLineMapper<Employee>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 setNames("employeeId", "firstName", "lastName", "email", "age");
