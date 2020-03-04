@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/run")
 public class JobController {
 
-   private JobRunner jobRunner;
+    private JobRunner jobRunner;
 
     public JobController(JobRunner jobRunner) {
         this.jobRunner = jobRunner;
@@ -19,6 +19,18 @@ public class JobController {
     public String runJob() {
         jobRunner.runBatchJob();
         return "Job submitted successfully.";
+    }
+
+    @GetMapping("/job/tasklet/clean")
+    public String runTaskletCleanupJob() {
+        jobRunner.runTasklet1Job();
+        return "Tasklet Job submitted successfully.";
+    }
+
+    @GetMapping("/job/tasklet/group-report")
+    public String runTaskletGroupReport() {
+        jobRunner.runGroupReport();
+        return "Tasklet Job submitted successfully.";
     }
 
 }
