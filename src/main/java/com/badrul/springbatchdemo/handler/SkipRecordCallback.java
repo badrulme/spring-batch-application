@@ -1,0 +1,10 @@
+package com.badrul.springbatchdemo.handler;
+
+import org.springframework.batch.item.file.LineCallbackHandler;
+
+public class SkipRecordCallback implements LineCallbackHandler {
+    @Override
+    public void handleLine(String s) {
+        System.out.println("##### First Record Data ##### " + s);
+    }
+}
